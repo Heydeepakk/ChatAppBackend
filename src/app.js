@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 //here we will put our routes
-const otpRoute = require('./Routes/otpRoute')
+const userRoute = require('./Routes/userRoute')
 //use of routes
-app.use('/api/chatapp/v1/user',upload.none(),otpRoute);
+app.use('/api/chatapp/v1/user',upload.none(),userRoute);
 
 
 
