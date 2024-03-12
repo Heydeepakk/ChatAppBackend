@@ -1,6 +1,3 @@
-const dotenv = require('dotenv');
-dotenv.config({path: '../../config.env'})
-
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://"+process.env.DB_USER+":"+process.env.DB_PASSWORD+"@cluster0.zhgpqr3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
