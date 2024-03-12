@@ -18,7 +18,7 @@ const userSchema = new Schema({
         type:String
     }
 
-},{timestamps:true});
+},{collection: 'User'},{timestamps:true});
 
 const user = mongoose.model('User',userSchema)
 
