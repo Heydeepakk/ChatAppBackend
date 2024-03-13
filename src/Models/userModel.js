@@ -12,10 +12,10 @@ const userSchema = new Schema({
         type:String
     },
     phoneNumber:{
-        type:String
+        type:Number
     },
     otp:{
-        type:String
+        type:Number
     }
 
 },{collection: 'User'},{timestamps:true});
