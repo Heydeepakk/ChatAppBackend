@@ -4,10 +4,9 @@ const userModel = require("../Models/userModel");
 exports.addUser = async (req, res, next) => {
   //if user allready exist (using number)
   const user = await userModel.findOne({
-    phoneNumber: req.body.phonenumber,
-    userStatus: "Not-Verified",
+    phoneNumber: req.body.phonenumber
   });
-  if (user && user.userStatus == "Not-Verfied") {
+  if (user && user.userStatus == "Not-Verified") {
     //update user
     const updateUser = await userModel.updateOne(
       { phoneNumber: req.body.phonenumber },
@@ -21,7 +20,7 @@ exports.addUser = async (req, res, next) => {
       }
     );
     if (!updateUser) {
-      res.json({ message: "Server Error" });
+      return res.json({ message: "Server Error" });
     }
   } else if (!user) {
     //create new user
@@ -32,18 +31,33 @@ exports.addUser = async (req, res, next) => {
       phoneNumber: req.body.phonenumber,
     });
     newUser.save().catch((err) => {
-      res.status(400).json({ message: "Failed to Register" });
+      return res.status(400).json({ message: "Failed to Register" });
     });
-  } else if (user && user.userStatus == "Verfied") {
-    res.status(201).json({ message: "User already exists" });
+  } else if (user && user.userStatus == "Verified") {
+    return res.status(201).json({ message: "User already exists" });
   }
-
-  res.json({ message: await sendOtp(req.body.phonenumber) });
+  return res.json({ message: await sendOtp(req.body.phonenumber) });
 };
 
 //to validate otp
 exports.validateOtp = async (req, res, next) => {
-  res.json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
+  const isValidate = await verifyOtp(req.body.phonenumber, req.body.otp);
+  if(isValidate == 'Otp Verified'){
+    const updateUser =  await userModel.updateOne(
+      { phoneNumber: req.body.phonenumber },
+      {
+        $set: {
+          userStatus:'Verified'
+        },
+      }
+    );
+    if (!updateUser) {
+      return res.json({ message: "Server Error" });
+    }
+    return res.json({ message:  isValidate});
+  }
+  else return res.json({message: isValidate})
+  
 };
 
 ///////////////////////////FUNCTIONS////////////////////
