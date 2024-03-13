@@ -5,9 +5,10 @@ exports.addUser = async (req, res, next) => {
   //if user allready exist (using number)
   const user = await userModel.findOne({
     phoneNumber: req.body.phonenumber,
+    userStatus: "Not-Verified",
   });
-  if (user) {
-    //upadte user
+  if (user && user.userStatus == "Not-Verfied") {
+    //update user
     const updateUser = await userModel.updateOne(
       { phoneNumber: req.body.phonenumber },
       {
@@ -16,17 +17,13 @@ exports.addUser = async (req, res, next) => {
           lastName: req.body.lastname,
           email: req.body.email,
           phoneNumber: req.body.phonenumber,
-          otp: randomOtp,
         },
       }
     );
-    if (updateUser) {
-      res.json({ message: "update" });
-    } else {
+    if (!updateUser) {
       res.json({ message: "Server Error" });
     }
-    res.status(409).json({ message: "User already Exists!" });
-  } else {
+  } else if (!user) {
     //create new user
     const newUser = new userModel({
       firstName: req.body.firstname,
@@ -34,31 +31,24 @@ exports.addUser = async (req, res, next) => {
       email: req.body.email,
       phoneNumber: req.body.phonenumber,
     });
-    newUser
-      .save()
-      .then(
-        res.status(200).json({
-          message: "Registered successfully",
-        })
-      )
-      .catch((err) => {
-        res.status(400).json({ message: "Failed to Register" });
-      });
-  }
-};
-
-exports.getAllUser = (req, res, next) => {
-  userModel
-    .find({})
-    .exec()
-    .then((users) => {
-      res.status(200).json({ users });
-    })
-    .catch((err) => {
-      res.status(400).json({ error: err });
+    newUser.save().catch((err) => {
+      res.status(400).json({ message: "Failed to Register" });
     });
+  } else if (user && user.userStatus == "Verfied") {
+    res.status(201).json({ message: "User already exists" });
+  }
+
+  res.json({ message: await sendOtp(req.body.phonenumber) });
 };
 
+//to validate otp
+exports.validateOtp = async (req, res, next) => {
+  res.json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
+};
+
+///////////////////////////FUNCTIONS////////////////////
+
+//to Send otp with validations
 const sendOtp = async (number) => {
   var unirest = require("unirest");
   //cheching user presence in db(user)
@@ -94,4 +84,14 @@ const sendOtp = async (number) => {
   );
   if (updateUser) return `Otp has been sent to ${number}`;
   return "Error while sending OTP!";
+};
+
+//to verify otp
+const verifyOtp = async (number, enteredOtp) => {
+  const isExist = await userModel.findOne({
+    phoneNumber: number,
+    otp: enteredOtp,
+  });
+  if (isExist) return "Otp Verified";
+  else return "Invalid OTP";
 };

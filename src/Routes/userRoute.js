@@ -4,7 +4,7 @@ const router = express.Router();
 const userController = require('../Controllers/userController')
 
 router.post('/register',userController.addUser)
-router.get('/getAllUser',userController.getAllUser)
+router.post('/validateOtp',userController.validateOtp)
 
 
 module.exports = router
