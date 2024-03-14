@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-
+const db = require("./Database/mongodb")
+db();
 //multer for the formdata
 const upload = multer();
 
