@@ -20,7 +20,7 @@ exports.addUser = async (req, res, next) => {
       }
     );
     if (!updateUser) {
-      return res.json({ message: "Server Error" });
+      return res.status(400).json({ message: "Server Error" });
     }
   } else if (!user) {
     //create new user
@@ -30,13 +30,13 @@ exports.addUser = async (req, res, next) => {
       email: req.body.email,
       phoneNumber: req.body.phonenumber,
     });
-    newUser.save().catch((err) => {
+    await newUser.save().catch((err) => {
       return res.status(400).json({ message: "Failed to Register" });
     });
   } else if (user && user.userStatus == "Verified") {
     return res.status(201).json({ message: "User already exists" });
   }
-  return res.json({ message: await sendOtp(req.body.phonenumber) });
+  return res.status(200).json({ message: await sendOtp(req.body.phonenumber) });
 };
 
 //to validate otp in register
