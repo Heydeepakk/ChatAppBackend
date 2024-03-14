@@ -54,7 +54,7 @@ exports.validateOtp = async (req, res, next) => {
     if (!updateUser) {
       return res.status(400).json({ message: "Server Error" });
     }
-    return res.status(201).json({ message: isValidate });
+    return res.status(201).json({ message: 'Successfully Registered!' });
   } else return res.status(400).json({ message: isValidate });
 };
 
