@@ -39,7 +39,7 @@ exports.addUser = async (req, res, next) => {
   return res.json({ message: await sendOtp(req.body.phonenumber) });
 };
 
-//to validate otp
+//to validate otp in register
 exports.validateOtp = async (req, res, next) => {
   const isValidate = await verifyOtp(req.body.phonenumber, req.body.otp);
   if (isValidate == "Otp Verified") {
@@ -58,6 +58,16 @@ exports.validateOtp = async (req, res, next) => {
   } else return res.json({ message: isValidate });
 };
 
+//login API
+exports.login = async (req, res, next) => {
+  res.json({ message: await sendOtp(req.res.phonenumber) });
+};
+//matchOtp
+exports.matchOtp = async (req, res, next) => {
+  res.json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
+};
+
+//testing
 exports.getAllUser = async (req, res) => {
   res.json({ data: await userModel.find() });
 };
@@ -71,7 +81,7 @@ const sendOtp = async (number) => {
   const user = await userModel.findOne({
     phoneNumber: number,
   });
-  if (!user) return "Number not registered";
+  if (!user) return "Account not found!";
 
   //Sending otp
   var randomOtp = Math.floor(999 + Math.random() * 9000);
