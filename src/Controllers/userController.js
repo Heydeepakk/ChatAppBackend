@@ -61,7 +61,7 @@ exports.validateOtp = async (req, res, next) => {
 
 //login API
 exports.login = async (req, res, next) => {
-  const response = await sendOtp(req.res.phonenumber);
+  const response = await sendOtp(req.body.phonenumber);
   res.status(response.status).json({ message: response.message });
 };
 //matchOtp
@@ -83,6 +83,7 @@ const sendOtp = async (number) => {
   //cheching user presence in db(user)
   const user = await userModel.findOne({
     phoneNumber: number,
+    userStatus: "Verified",
   });
   if (!user) return { status: 404, message: "Account not found!" };
 
