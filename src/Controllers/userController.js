@@ -36,14 +36,14 @@ exports.addUser = async (req, res, next) => {
   } else if (user && user.userStatus == "Verified") {
     return res.status(201).json({ message: "Number already exists" });
   }
-  const response = await sendOtp(req.body.phonenumber)
-  return res.status(response.status).json({ message: response.message});
+  const response = await sendOtp(req.body.phonenumber);
+  return res.status(response.status).json({ message: response.message });
 };
 
 //to validate otp in register
 exports.validateOtp = async (req, res, next) => {
   const isValidate = await verifyOtp(req.body.phonenumber, req.body.otp);
-  if (isValidate == "Otp Verified") {
+  if (isValidate.status == 200) {
     const updateUser = await userModel.updateOne(
       { phoneNumber: req.body.phonenumber },
       {
@@ -53,10 +53,10 @@ exports.validateOtp = async (req, res, next) => {
       }
     );
     if (!updateUser) {
-      return res.status(400).json({ message: "Server Error" });
+      return res.status(403).json({ message: "Server Error" });
     }
     return res.status(201).json({ message: "Successfully Registered!" });
-  } else return res.status(400).json({ message: isValidate });
+  } else return res.status(400).json({ message: isValidate.message });
 };
 
 //login API
@@ -66,9 +66,8 @@ exports.login = async (req, res, next) => {
 };
 //matchOtp
 exports.matchOtp = async (req, res, next) => {
-  res
-    .status(200)
-    .json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
+  const response = await verifyOtp(req.body.phonenumber, req.body.otp);
+  res.status(response.status).json({ message: response.message });
 };
 
 //testing
@@ -126,6 +125,6 @@ const verifyOtp = async (number, enteredOtp) => {
     phoneNumber: number,
     otp: enteredOtp,
   });
-  if (isExist) return "Otp Verified";
-  else return "Invalid OTP";
+  if (isExist) return { status: 200, message: "Otp Verified" };
+  else return { status: 400, message: "Invalid OTP" };
 };
