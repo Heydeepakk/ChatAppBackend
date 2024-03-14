@@ -8,7 +8,7 @@ const upload = multer();
 //use of app
 const app = express();
 app.use(cors());
-app.use(express.json());
+// app.use(express.json());
 // app.use(express.urlencoded({ extended: true}));
 
 //here we will put our routes
