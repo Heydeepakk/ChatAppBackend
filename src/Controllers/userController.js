@@ -36,7 +36,8 @@ exports.addUser = async (req, res, next) => {
   } else if (user && user.userStatus == "Verified") {
     return res.status(201).json({ message: "Number already exists" });
   }
-  return res.status(200).json({ message: await sendOtp(req.body.phonenumber) });
+  const response = await sendOtp(req.body.phonenumber)
+  return res.status(response.status).json({ message: response.message});
 };
 
 //to validate otp in register
@@ -60,7 +61,8 @@ exports.validateOtp = async (req, res, next) => {
 
 //login API
 exports.login = async (req, res, next) => {
-  res.status(200).json({ message: await sendOtp(req.res.phonenumber) });
+  const response = await sendOtp(req.res.phonenumber);
+  res.status(response.status).json({ message: response.message });
 };
 //matchOtp
 exports.matchOtp = async (req, res, next) => {
@@ -83,7 +85,7 @@ const sendOtp = async (number) => {
   const user = await userModel.findOne({
     phoneNumber: number,
   });
-  if (!user) return "Account not found!";
+  if (!user) return { status: 404, message: "Account not found!" };
 
   //Sending otp
   var randomOtp = Math.floor(999 + Math.random() * 9000);
@@ -110,8 +112,12 @@ const sendOtp = async (number) => {
       },
     }
   );
-  if (updateUser) return `Otp has been sent to ${number}`;
-  return "Error while sending OTP!";
+  if (updateUser)
+    return { status: 200, message: `Otp has been sent to ${number}` };
+  return {
+    status: 400,
+    message: "Something went wrong, Please try after some time",
+  };
 };
 
 //to verify otp
