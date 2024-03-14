@@ -127,5 +127,5 @@ const verifyOtp = async (number, enteredOtp) => {
     otp: enteredOtp,
   });
   if (isExist) return { status: 200, message: "Otp Verified" };
-  else return { status: 400, message: "Invalid OTP" };
+  else return { status: 404, message: "Invalid OTP" };
 };
