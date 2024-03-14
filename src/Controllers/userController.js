@@ -59,6 +59,8 @@ exports.validateOtp = async (req, res, next) => {
 };
 
 exports.getAllUser = async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Content-Type", "application/json");
   res.json({ data: await userModel.find() });
 };
 
