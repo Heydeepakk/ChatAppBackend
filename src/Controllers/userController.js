@@ -36,9 +36,7 @@ exports.addUser = async (req, res, next) => {
   } else if (user && user.userStatus == "Verified") {
     return res.status(201).json({ message: "User already exists" });
   }
-  return res
-    .status(200)
-    .json({ status: 200, message: await sendOtp(req.body.phonenumber) });
+  return res.status(200).json({ message: await sendOtp(req.body.phonenumber) });
 };
 
 //to validate otp in register
@@ -56,7 +54,7 @@ exports.validateOtp = async (req, res, next) => {
     if (!updateUser) {
       return res.status(400).json({ message: "Server Error" });
     }
-    return res.status(200).json({ status: 200, message: isValidate });
+    return res.status(201).json({ message: isValidate });
   } else return res.status(400).json({ message: isValidate });
 };
 
@@ -68,10 +66,7 @@ exports.login = async (req, res, next) => {
 exports.matchOtp = async (req, res, next) => {
   res
     .status(200)
-    .json({
-      status: 200,
-      message: await verifyOtp(req.body.phonenumber, req.body.otp),
-    });
+    .json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
 };
 
 //testing
