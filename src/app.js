@@ -7,7 +7,8 @@ const upload = multer();
 
 //use of app
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(cors({origin: true, credentials: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
