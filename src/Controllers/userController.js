@@ -4,7 +4,7 @@ const userModel = require("../Models/userModel");
 exports.addUser = async (req, res, next) => {
   //if user allready exist (using number)
   const user = await userModel.findOne({
-    phoneNumber: req.body.phonenumber
+    phoneNumber: req.body.phonenumber,
   });
   if (user && user.userStatus == "Not-Verified") {
     //update user
@@ -42,22 +42,24 @@ exports.addUser = async (req, res, next) => {
 //to validate otp
 exports.validateOtp = async (req, res, next) => {
   const isValidate = await verifyOtp(req.body.phonenumber, req.body.otp);
-  if(isValidate == 'Otp Verified'){
-    const updateUser =  await userModel.updateOne(
+  if (isValidate == "Otp Verified") {
+    const updateUser = await userModel.updateOne(
       { phoneNumber: req.body.phonenumber },
       {
         $set: {
-          userStatus:'Verified'
+          userStatus: "Verified",
         },
       }
     );
     if (!updateUser) {
       return res.json({ message: "Server Error" });
     }
-    return res.json({ message:  isValidate});
-  }
-  else return res.json({message: isValidate})
-  
+    return res.json({ message: isValidate });
+  } else return res.json({ message: isValidate });
+};
+
+exports.getAllUser = async (req, res) => {
+  res.json({ data: await userModel.find() });
 };
 
 ///////////////////////////FUNCTIONS////////////////////
