@@ -34,7 +34,7 @@ exports.addUser = async (req, res, next) => {
       return res.status(400).json({ message: "Failed to Register" });
     });
   } else if (user && user.userStatus == "Verified") {
-    return res.status(201).json({ message: "User already exists" });
+    return res.status(201).json({ message: "Number already exists" });
   }
   return res.status(200).json({ message: await sendOtp(req.body.phonenumber) });
 };
@@ -54,7 +54,7 @@ exports.validateOtp = async (req, res, next) => {
     if (!updateUser) {
       return res.status(400).json({ message: "Server Error" });
     }
-    return res.status(201).json({ message: 'Successfully Registered!' });
+    return res.status(201).json({ message: "Successfully Registered!" });
   } else return res.status(400).json({ message: isValidate });
 };
 
