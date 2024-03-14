@@ -52,19 +52,21 @@ exports.validateOtp = async (req, res, next) => {
       }
     );
     if (!updateUser) {
-      return res.json({ message: "Server Error" });
+      return res.status(400).json({ message: "Server Error" });
     }
-    return res.json({ message: isValidate });
-  } else return res.json({ message: isValidate });
+    return res.status(200).json({ message: isValidate });
+  } else return res.status(400).json({ message: isValidate });
 };
 
 //login API
 exports.login = async (req, res, next) => {
-  res.json({ message: await sendOtp(req.res.phonenumber) });
+  res.status(200).json({ message: await sendOtp(req.res.phonenumber) });
 };
 //matchOtp
 exports.matchOtp = async (req, res, next) => {
-  res.json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
+  res
+    .status(200)
+    .json({ message: await verifyOtp(req.body.phonenumber, req.body.otp) });
 };
 
 //testing
