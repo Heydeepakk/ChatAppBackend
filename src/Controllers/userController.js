@@ -74,7 +74,9 @@ exports.login = async (req, res, next) => {
 //matchOtp
 exports.matchOtp = async (req, res, next) => {
   const response = await verifyOtp(req.body.phonenumber, req.body.otp);
-  res.status(response.status).json({ message: response.message });
+  res
+    .status(response.status)
+    .json({ message: response.message, user: response.user });
 };
 
 //testing
@@ -128,10 +130,13 @@ const sendOtp = async (number) => {
 
 //to verify otp
 const verifyOtp = async (number, enteredOtp) => {
-  const isExist = await userModel.findOne({
-    phoneNumber: number,
-    otp: enteredOtp,
-  });
-  if (isExist) return { status: 200, message: "Otp Verified" };
-  else return { status: 404, message: "Invalid OTP" };
+  const isExist = await userModel.findOne(
+    {
+      phoneNumber: number,
+      otp: enteredOtp,
+    },
+    "firstName lastName email phoneNumber"
+  );
+  if (isExist) return { status: 200, message: "Otp Verified", user: isExist };
+  else return { status: 404, message: "Invalid OTP", user: "No Data" };
 };
