@@ -34,7 +34,7 @@ exports.addUser = async (req, res, next) => {
       return res.status(400).json({ message: "Failed to Register" });
     });
   } else if (user && user.userStatus == "Verified") {
-    return res.status(201).json({ message: "Number already exists" });
+    return res.status(409).json({ message: "Number already exists" });
   }
   const response = await sendOtp(req.body.phonenumber);
   return res.status(response.status).json({ message: response.message });
