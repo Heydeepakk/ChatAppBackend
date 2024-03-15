@@ -62,7 +62,7 @@ exports.validateOtp = async (req, res, next) => {
 //login API
 exports.login = async (req, res, next) => {
   const user = userModel.findOne({
-    phoneNumber: phonenumber,
+    phoneNumber: req.body.phonenumber,
     userStatus: "Verified",
   });
   if (user) {
