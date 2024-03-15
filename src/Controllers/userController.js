@@ -82,8 +82,7 @@ const sendOtp = async (number) => {
   var unirest = require("unirest");
   //cheching user presence in db(user)
   const user = await userModel.findOne({
-    phoneNumber: number,
-    userStatus: "Verified",
+    phoneNumber: number
   });
   if (!user) return { status: 404, message: "Account not found!" };
 
