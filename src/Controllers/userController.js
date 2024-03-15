@@ -61,8 +61,15 @@ exports.validateOtp = async (req, res, next) => {
 
 //login API
 exports.login = async (req, res, next) => {
-  const response = await sendOtp(req.body.phonenumber);
-  res.status(response.status).json({ message: response.message });
+  const user = userModel.findOne({
+    phoneNumber: phonenumber,
+    userStatus: "Verified",
+  });
+  if (user) {
+    const response = await sendOtp(req.body.phonenumber);
+    return res.status(response.status).json({ message: response.message });
+  }
+  return res.status(404).json({ message: "Account not found!" });
 };
 //matchOtp
 exports.matchOtp = async (req, res, next) => {
@@ -82,7 +89,7 @@ const sendOtp = async (number) => {
   var unirest = require("unirest");
   //cheching user presence in db(user)
   const user = await userModel.findOne({
-    phoneNumber: number
+    phoneNumber: number,
   });
   if (!user) return { status: 404, message: "Account not found!" };
 
